@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>index.html</h1>
+    <h1>Товары</h1>
+    {% for item in goods%}
+    <div class="col-md6 border rounded">
+        <div>{{item.name}}</div>
+        <a href="/info/{{item.id}}">Посмотреть описание</a>
+    </div>
+    <br>
+    {% endfor %}
+    <!-- {% for i in param %}
+        <img src="{{url_for('static', filename=i)}}">
+    {% endfor %} -->
 {% endblock %}
