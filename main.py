@@ -12,7 +12,7 @@ from data import db_session
 # noinspection PyUnresolvedReferences
 from data.users import User
 # noinspection PyUnresolvedReferences
-from data.news import News
+from data.goods import Goods
 # noinspection PyUnresolvedReferences
 
 app = Flask(__name__)
@@ -26,7 +26,6 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
     name = StringField('Имя пользователя', validators=[DataRequired()])
-    about = TextAreaField("Немного о себе")
     submit = SubmitField('Войти')
 
 
@@ -45,7 +44,7 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/shop.sqlite")
-    app.run()
+    app.run(port=8018, host='127.0.0.1')
 
 
 @app.errorhandler(404)
@@ -56,8 +55,8 @@ def not_found(error):
 @app.route("/")
 def index():
     session = db_session.create_session()
-
-    return render_template("index.html")
+    goods = session.query(Goods).all()
+    return render_template("index.html", goods=goods)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -104,6 +103,15 @@ def reqister():
         session.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route("/info/<int:goods_id>")
+def info(goods_id):
+    print(goods_id)
+    print(type(goods_id))
+    session = db_session.create_session()
+    goods = session.query(Goods).filter(Goods.id == goods_id).first()
+    return render_template("info.html", goods=goods)
 
 
 @app.route("/cookie_test")
