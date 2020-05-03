@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
     <h1>Информация о товаре</h1>
-    <div>{{goods.name}}</div>
+    <h2>{{goods.name}}</h2>
+    <p>
+        <img src="/static/{{ goods.image }}.jpg" width="35%" align="left"
+            style="margin-right: 20px;">
+        <div class="coast">{{ goods.coast}} ₽</div>
+        <div class="content">
+            <h5>Описание</h5>
+            <div>{{ goods.content }}</div>
+        </div>
+    </p>
 {% endblock %}
