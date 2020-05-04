@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response, jsonify, abort
+from flask import Flask, render_template, request, make_response, jsonify, abort, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
@@ -38,13 +38,13 @@ class LoginForm(FlaskForm):
 
 @login_manager.user_loader
 def load_user(user_id):
-    session = db_session.create_session()
-    return session.query(User).get(user_id)
+    sessions = db_session.create_session()
+    return sessions.query(User).get(user_id)
 
 
 def main():
     db_session.global_init("db/shop.sqlite")
-    app.run(port=8018, host='127.0.0.1')
+    app.run(port=8014, host='127.0.0.1')
 
 
 @app.errorhandler(404)
@@ -54,8 +54,8 @@ def not_found(error):
 
 @app.route("/")
 def index():
-    session = db_session.create_session()
-    goods = session.query(Goods).all()
+    sessions = db_session.create_session()
+    goods = sessions.query(Goods).all()
     return render_template("index.html", goods=goods)
 
 
@@ -107,11 +107,52 @@ def reqister():
 
 @app.route("/info/<int:goods_id>")
 def info(goods_id):
-    print(goods_id)
-    print(type(goods_id))
-    session = db_session.create_session()
-    goods = session.query(Goods).filter(Goods.id == goods_id).first()
+    sessions = db_session.create_session()
+    goods = sessions.query(Goods).filter(Goods.id == goods_id).first()
     return render_template("info.html", goods=goods)
+
+
+@app.route("/add/<int:goods_id>")
+def add(goods_id):
+    sessions = db_session.create_session()
+    goods = sessions.query(Goods).filter(Goods.id == goods_id).first()
+
+    if 'add' in session:
+        zn = session['add']
+    else:
+        zn = []
+    zn.append(goods.name)
+    session['add'] = zn
+    return render_template("add.html", goods=goods)
+
+
+@app.route("/basket")
+def basket():
+    if 'add' in session:
+        goods = session['add']
+        message = 'Вы добавили данные товары'
+    else:
+        goods = []
+        message = 'Ваша карзина пуста'
+    return render_template("basket.html", goods=goods, message=message)
+
+
+@app.route("/clear")
+def clear():
+    if 'add' in session:
+        session['add'] = []
+    goods = session['add']
+    return render_template("basket.html", goods=goods)
+
+
+@app.route("/order")
+def order():
+    # нужно создать БД с заказами пользователей
+    # вывод общей стоимости товара
+    if 'add' in session:
+        session['add'] = []
+    goods = session['add']
+    return render_template("order.html", goods=goods)
 
 
 @app.route("/cookie_test")
