@@ -2,7 +2,7 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-    <h1>Информация о товаре</h1>
+    <h1 class="about">Информация о товаре</h1>
     <h2>{{goods.name}}</h2>
     <p>
         <img src="/static/{{ goods.image }}.jpg" width="35%" align="left"
@@ -13,4 +13,5 @@
             <div>{{ goods.content }}</div>
         </div>
     </p>
+    <a class="btn btn-primary " href="/add/{{goods.id}}">Добавить в корзину</a>
 {% endblock %}
