@@ -1,14 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="/static/css/index_style.css" />
     <h1>Товары</h1>
-    {% for item in goods%}
-    <div class="col-md6 border rounded">
-        <div>{{item.name}}</div>
-        <a href="/info/{{item.id}}">Посмотреть описание</a>
+
+    <div class="filter"><label for="filter">Фильтр</label></div>
+    <div class="checkbox">
+        <input type="checkbox" name="model" value="2"> Овен<br>
+        <input type="checkbox" name="model" value="3"> Телец<br>
+        <input type="checkbox" name="model" value="4"> Близнецы<br>
+        <input type="checkbox" name="model" value="5"> Рак<br>
+        <input type="checkbox" name="model" value="1"> Лев<br>
+        <input type="checkbox" name="model" value="6"> Дева<br>
+        <input type="checkbox" name="model" value="7"> Весы<br>
+        <input type="checkbox" name="model" value="8"> Скорпион<br>
+        <input type="checkbox" name="model" value="9"> Стрелец<br>
+        <input type="checkbox" name="model" value="10"> Козерог<br>
+        <input type="checkbox" name="model" value="11"> Водолей<br>
+        <input type="checkbox" name="model" value="12"> Рыбы<br>
     </div>
-    <br>
+    <div class="filter_bottom"><a class="btn btn-primary" href="/">Найти</a></div>
+    <div class="group_of_goods">
+        {% for item in goods%}
+            <div class="goods">
+                <div class="col-md6 border rounded">
+                    <div>{{item.name}}</div>
+                    <a href="/info/{{item.id}}">Посмотреть описание</a>
+                </div>
+            </div>
+            <br>
+    </div>
     {% endfor %}
+
     <!-- {% for i in param %}
         <img src="{{url_for('static', filename=i)}}">
     {% endfor %} -->
