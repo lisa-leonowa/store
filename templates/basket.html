@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ message }}</h1>
+    {% for i in goods %}
+        <h1>{{ i }}</h1>
+    {% endfor %}
+    <a class="btn btn-success" href="/order">Оформить заказ</a>
+    <a class="btn btn-success" href="/clear">Очистить корзину</a>
+{% endblock %}
