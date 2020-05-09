@@ -44,7 +44,7 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/shop.sqlite")
-    app.run(port=8014, host='127.0.0.1')
+    app.run(port=8071, host='127.0.0.1')
 
 
 @app.errorhandler(404)
@@ -52,10 +52,16 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
+    lis = []
     sessions = db_session.create_session()
     goods = sessions.query(Goods).all()
+    if request.method == 'POST':
+        for i in request.form.getlist('model'):
+            good = sessions.query(Goods).filter(Goods.id == int(i)).first()
+            lis.append(good)
+        return render_template("index.html", goods=lis)
     return render_template("index.html", goods=goods)
 
 
@@ -153,7 +159,7 @@ def order():
         session['add'] = []
     goods = session['add']
     return render_template("order.html", goods=goods)
-
+    
 
 @app.route("/cookie_test")
 def cookie_test():
