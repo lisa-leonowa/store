@@ -1,38 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="/static/css/index_style.css" />
-    <h1>Товары</h1>
-
-    <div class="filter"><label for="filter">Фильтр</label></div>
-    <div class="checkbox">
-        <input type="checkbox" name="model" value="2"> Овен<br>
-        <input type="checkbox" name="model" value="3"> Телец<br>
-        <input type="checkbox" name="model" value="4"> Близнецы<br>
-        <input type="checkbox" name="model" value="5"> Рак<br>
-        <input type="checkbox" name="model" value="1"> Лев<br>
-        <input type="checkbox" name="model" value="6"> Дева<br>
-        <input type="checkbox" name="model" value="7"> Весы<br>
-        <input type="checkbox" name="model" value="8"> Скорпион<br>
-        <input type="checkbox" name="model" value="9"> Стрелец<br>
-        <input type="checkbox" name="model" value="10"> Козерог<br>
-        <input type="checkbox" name="model" value="11"> Водолей<br>
-        <input type="checkbox" name="model" value="12"> Рыбы<br>
-    </div>
-    <div class="filter_bottom"><a class="btn btn-primary" href="/">Найти</a></div>
-    <div class="group_of_goods">
-        {% for item in goods%}
-            <div class="goods">
-                <div class="col-md6 border rounded">
-                    <div>{{item.name}}</div>
-                    <a href="/info/{{item.id}}">Посмотреть описание</a>
-                </div>
+    <link rel="stylesheet" type="text/css" href="/static/css/index_style.css"/>
+    <div class="all">
+        <div class="filter">
+            <h3>Фильтр</h3>
+            <form class="style" method="post">
+                <input type="checkbox" name="model" value="2"/> Овен<br>
+                <input type="checkbox" name="model" value="3"/> Телец<br>
+                <input type="checkbox" name="model" value="4"/> Близнецы<br>
+                <input type="checkbox" name="model" value="5"/> Рак<br>
+                <input type="checkbox" name="model" value="1"/> Лев<br>
+                <input type="checkbox" name="model" value="6"/> Дева<br>
+                <input type="checkbox" name="model" value="7"/> Весы<br>
+                <input type="checkbox" name="model" value="8"/> Скорпион<br>
+                <input type="checkbox" name="model" value="9"/> Стрелец<br>
+                <input type="checkbox" name="model" value="10"/> Козерог<br>
+                <input type="checkbox" name="model" value="11"/> Водолей<br>
+                <input type="checkbox" name="model" value="12"/> Рыбы<br>
+                <button type="submit" class="btn btn-outline-info">Применить</button>
+            </form>
+        </div>
+        <div class="about">
+            <h1>Товары</h1>
+            <div class="cont">
+                {% for item in goods %}
+                    <div class="good">
+                        <div><img src="/static/{{ item.image }}.jpg"></div>
+                        <div><a href="/info/{{ item.id }}">{{ item.name }}</a></div>
+                    </div>
+                {% endfor %}
             </div>
-            <br>
+        </div>
     </div>
-    {% endfor %}
-
-    <!-- {% for i in param %}
-        <img src="{{url_for('static', filename=i)}}">
-    {% endfor %} -->
 {% endblock %}
