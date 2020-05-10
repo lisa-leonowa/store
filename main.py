@@ -263,6 +263,11 @@ def order():
     return render_template("order.html", goods=goods, total=total)
 
 
+@app.route('/map')
+def map():
+    return render_template('map.html')
+
+
 @app.route("/cookie_test")
 def cookie_test():
     visits_count = int(request.cookies.get("visits_count", 0))
