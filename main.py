@@ -148,7 +148,7 @@ def add(goods_id):
         cur = conn.cursor()
         sql = f"""
             INSERT INTO orders 
-            VALUES ({goods.id}, '{goods.name}', '{goods.content}', '{goods.image}', {goods.coast}, {goods.value})
+            VALUES ({goods.id}, '{goods.name}', '{goods.content}', '{goods.image}', {goods.coast}, 1)
             """
         cur.execute(sql)
         conn.commit()
@@ -196,13 +196,14 @@ def basket():
                     """
                 cur.execute(sql)
                 conn.commit()
+
     if 'add' in session:
         goods = session['add']
         message = 'Вы добавили данные товары'
     else:
         goods = []
         message = 'Ваша карзина пуста'
-
+    print(goods)
     return render_template("basket.html", goods=goods, message=message)
 
 
@@ -215,8 +216,8 @@ def clear():
     cur = conn.cursor()
     sql = """
         UPDATE goods 
-        SET value = 1
-        WHERE value != 1
+        SET value = 0
+        WHERE value != 0
         """
     cur.execute(sql)
     conn.commit()
@@ -248,8 +249,8 @@ def order():
     cur = conn.cursor()
     sql = """
             UPDATE goods 
-            SET value = 1
-            WHERE value != 1
+            SET value = 0
+            WHERE value != 0
             """
     cur.execute(sql)
     conn.commit()
