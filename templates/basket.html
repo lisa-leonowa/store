@@ -1,10 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="/static/css/basket_style.css" />
     <h1>{{ message }}</h1>
-    {% for i in goods %}
-        <h1>{{ i }}</h1>
-    {% endfor %}
+    <div class="cont">
+        {% for item in goods %}
+            <div class="good">
+                <div><img src="/static/{{ item[2] }}.jpg"></div>
+                <div class="name">
+                    <div class="info"><a href="/info/{{ item[0] }}">{{ item[1] }}</a></div>
+                    <div class="number">
+                        <form class="style" method="post">
+                            <input type="hidden" name="button" value="1 {{ item[0] }}">
+                            <input type="submit" class="btn btn-outline-info" value="-">
+                        </form>
+                        <div> {{ item[4] }} </div>
+                        <form class="style" method="post">
+                            <input type="hidden" name="button" value="2 {{ item[0] }}">
+                            <input type="submit" class="btn btn-outline-info" value="+">
+                        </form>
+                    </div>
+                </div>
+                <div class="coast">
+                    <div>{{ item[3] }}₽</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
     <a class="btn btn-success" href="/order">Оформить заказ</a>
     <a class="btn btn-success" href="/clear">Очистить корзину</a>
 {% endblock %}
