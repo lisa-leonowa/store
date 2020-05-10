@@ -1,0 +1,29 @@
+.good{width: 77%;
+    height: 130px;
+    margin: 10px 0px;
+    box-shadow: 5px 5px 10px grey;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;}
+
+img{width: 65%;
+    height: 100%;}
+
+.cont{width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;}
+
+.number {display: flex;
+    flex-direction: row;
+    justify-content: space-between;}
+
+.coast {font-weight: 500;
+    padding-top: 6%;
+    padding-right: 3%;
+    padding-left: 60%;}
+
+.info {width: 140px;
+    padding-top: 15%;
+    padding-bottom: 15%;}
