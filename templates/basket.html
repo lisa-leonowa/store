@@ -2,31 +2,40 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="/static/css/basket_style.css" />
-    <h1>{{ message }}</h1>
-    <div class="cont">
-        {% for item in goods %}
-            <div class="good">
-                <div><img src="/static/{{ item[2] }}.jpg"></div>
-                <div class="name">
-                    <div class="info"><a href="/info/{{ item[0] }}">{{ item[1] }}</a></div>
-                    <div class="number">
-                        <form class="style" method="post">
-                            <input type="hidden" name="button" value="1 {{ item[0] }}">
-                            <input type="submit" class="btn btn-outline-info" value="-">
-                        </form>
-                        <div> {{ item[4] }} </div>
-                        <form class="style" method="post">
-                            <input type="hidden" name="button" value="2 {{ item[0] }}">
-                            <input type="submit" class="btn btn-outline-info" value="+">
-                        </form>
+    {% if not me %}
+        {% if goods %}
+            <h1>Вы добавили в корзину данные товары</h1>
+            <div class="cont">
+                {% for item in goods %}
+                    <div class="good">
+                        <div class="scrinn"><img src="/static/{{ item[2] }}.jpg"></div>
+                        <div class="name">
+                            <div class="info"><a href="/info/{{ item[0] }}">{{ item[1] }}</a></div>
+                            <div class="number">
+                                <form class="style" method="post">
+                                    <input type="hidden" name="button" value="1 {{ item[0] }}">
+                                    <input type="submit" class="btn btn-outline-info" value="-">
+                                </form>
+                                <div> {{ item[4] }} </div>
+                                <form class="style" method="post">
+                                    <input type="hidden" name="button" value="2 {{ item[0] }}">
+                                    <input type="submit" class="btn btn-outline-info" value="+">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="coast">
+                            <div>{{ item[3] }}₽</div>
+                        </div>
                     </div>
-                </div>
-                <div class="coast">
-                    <div>{{ item[3] }}₽</div>
-                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
-    <a class="btn btn-success" href="/order">Оформить заказ</a>
-    <a class="btn btn-success" href="/clear">Очистить корзину</a>
+            <a class="btn btn-success" href="/order">Оформить заказ</a>
+            <a class="btn btn-success" href="/clear">Очистить корзину</a>
+        {% else %}
+            <h1>Вы не добавили ни один товар в корзину!</h1>
+            <img src="/static/img/empty_basket.png">
+        {% endif %}
+    {% else %}
+        <h1>{{ me }}</h1>
+    {% endif %}
 {% endblock %}
