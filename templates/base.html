@@ -16,6 +16,7 @@
         <p>
             <a class="btn btn-outline-danger" href="/">Товары</a>
             <a class="btn btn-warning" href="/basket">Корзина</a>
+            <a class="btn btn-outline-secondary" href="/map">Пункт выдачи</a>
         </p>
         {% if current_user.is_authenticated %}
             <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
