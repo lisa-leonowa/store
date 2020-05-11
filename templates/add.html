@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-<h1 class="add">Товар {{ goods.name }} добавлен в корзину</h1>
+{% if not message %}
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <h1 class="add">Товар {{ goods.name }} добавлен в корзину</h1>
+{% else %}
+    <h1 class="add">Извините, товара {{ message }}</h1>
+{% endif %}
 <a class="btn btn-primary " href="/">Продолжить просмотр товаров</a>
 <a class="btn btn-success" href="/basket">Перейти в корзину</a>
 {% endblock %}
