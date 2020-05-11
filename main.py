@@ -50,7 +50,7 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/shop.sqlite")
-    app.run(port=8014, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
 
 
 @app.errorhandler(404)
@@ -67,8 +67,8 @@ def index():
         for i in request.form.getlist('model'):
             good = sessions.query(Goods).filter(Goods.id == int(i)).first()
             lis.append(good)
-        return render_template("index.html", goods=lis)
-    return render_template("index.html", goods=goods)
+        return render_template("index.html", title='Отфильтрованные товары', goods=lis)
+    return render_template("index.html", title='Интернет-магазин', goods=goods)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -80,7 +80,7 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
-        return render_template('login.html',
+        return render_template('login.html', title='Авторизация',
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
@@ -121,92 +121,94 @@ def reqister():
 def info(goods_id):
     sessions = db_session.create_session()
     goods = sessions.query(Goods).filter(Goods.id == goods_id).first()
-    return render_template("info.html", goods=goods)
+    return render_template("info.html", title='Информация о товаре', goods=goods)
 
 
 @app.route("/add/<int:goods_id>")
 def add(goods_id):
     sessions = db_session.create_session()
     goods = sessions.query(Goods).filter(Goods.id == goods_id).first()
-    if 'add' in session:
-        zn = session['add']
-    else:
-        zn = []
-    conn = sqlite3.connect('db/shop.sqlite')
-    cur = conn.cursor()
-    sql = f"""
-    UPDATE orders 
-    SET value = value + 1
-    WHERE id = {goods.id}
-    """
-    cur.execute(sql)
-    conn.commit()
-    ok, sp = True, 0
-    for i in range(len(zn)):
-        if goods.id in zn[i]:
-            ok = False
-            sp = i
-    if ok:
-        zn.append([goods.id, goods.name, goods.image, goods.coast, goods.value])
+    if goods.value > 0:
+        if 'add' in session:
+            zn = session['add']
+        else:
+            zn = []
         conn = sqlite3.connect('db/shop.sqlite')
         cur = conn.cursor()
         sql = f"""
-            INSERT INTO orders 
-            VALUES ({goods.id}, '{goods.name}', '{goods.content}', '{goods.image}', {goods.coast}, 1)
-            """
+        UPDATE orders 
+        SET value = value + 1
+        WHERE id = {goods.id}
+        """
         cur.execute(sql)
         conn.commit()
+        ok, sp = True, 0
+        for i in range(len(zn)):
+            if goods.id in zn[i]:
+                ok = False
+                sp = i
+        if ok:
+            zn.append([goods.id, goods.name, goods.image, goods.coast, goods.value])
+            conn = sqlite3.connect('db/shop.sqlite')
+            cur = conn.cursor()
+            sql = f"""
+                INSERT INTO orders 
+                VALUES ({goods.id}, '{goods.name}', '{goods.content}', '{goods.image}', {goods.coast}, 1)
+                """
+            cur.execute(sql)
+            conn.commit()
+        else:
+            zn[sp][-1] += 1
+
+        session['add'] = zn
+        return render_template("add.html", title='Добавление товара', goods=goods)
     else:
-        zn[sp][-1] += 1
-
-    session['add'] = zn
-
-    return render_template("add.html", goods=goods)
+        return render_template("add.html", title='Добавление товара', goods=goods, message='нет на скаладе')
 
 
 @app.route("/basket", methods=['GET', 'POST'])
 def basket():
-    if request.method == 'POST':
-        button = request.form['button']
-        but = int(button.split()[1])
-        sessions = db_session.create_session()
-        orders = sessions.query(Orders).filter(Orders.id == but).first()
-        goods = sessions.query(Goods).filter(Goods.id == but).first()
-        if button.split()[0] == '2':
-            if orders.value + 1 <= goods.value:
+    if current_user.is_authenticated == True:
+        if request.method == 'POST':
+            button = request.form['button']
+            but = int(button.split()[1])
+            sessions = db_session.create_session()
+            orders = sessions.query(Orders).filter(Orders.id == but).first()
+            goods = sessions.query(Goods).filter(Goods.id == but).first()
+            if button.split()[0] == '2':
+                if orders.value + 1 <= goods.value:
+                    conn = sqlite3.connect('db/shop.sqlite')
+                    cur = conn.cursor()
+                    sql = f"""
+                        UPDATE orders 
+                        SET value = value + 1
+                        WHERE id = {orders.id}
+                        """
+                    cur.execute(sql)
+                    conn.commit()
+            if button.split()[0] == '1':
                 conn = sqlite3.connect('db/shop.sqlite')
                 cur = conn.cursor()
-                sql = f"""
-                    UPDATE orders 
-                    SET value = value + 1
-                    WHERE id = {orders.id}
-                    """
-                cur.execute(sql)
-                conn.commit()
-        if button.split()[0] == '1':
-            conn = sqlite3.connect('db/shop.sqlite')
-            cur = conn.cursor()
-            if orders.value - 1 >= 0:
-                sql = f"""
-                    UPDATE orders 
-                    SET value = value - 1
-                    WHERE id = {orders.id}
-                    """
-                cur.execute(sql)
-                conn.commit()
+                if orders.value - 1 >= 0:
+                    sql = f"""
+                        UPDATE orders 
+                        SET value = value - 1
+                        WHERE id = {orders.id}
+                        """
+                    cur.execute(sql)
+                    conn.commit()
 
-    if 'add' in session:
-        goods = session['add']
-        message = 'Вы добавили данные товары'
+        if 'add' in session:
+            goods = session['add']
+        else:
+            goods = []
+        sessions = db_session.create_session()
+        orders = sessions.query(Orders).all()
+        for i in range(len(orders)):
+            goods[i][-1] = orders[i].value
+        return render_template("basket.html", title='Корзина', goods=goods)
     else:
-        goods = []
-        message = 'Ваша карзина пуста'
-    sessions = db_session.create_session()
-    orders = sessions.query(Orders).all()
-    for i in range(len(orders)):
-        goods[i][-1] = orders[i].value
-    print(goods)
-    return render_template("basket.html", goods=goods, message=message)
+        return render_template("basket.html", title='Корзина', me='Авторизуйтесь, чтобы просматривать корзину!')
 
 
 @app.route("/clear")
@@ -220,7 +222,7 @@ def clear():
     sql = """DELETE FROM orders"""
     cur.execute(sql)
     conn.commit()
-    return render_template("basket.html", goods=goods, message='Ваша корзина пуста')
+    return render_template("basket.html", title='Корзина', goods=goods, message='Ваша корзина пуста')
 
 
 @app.route("/order")
@@ -251,7 +253,7 @@ def order():
     cur.execute(sql)
     conn.commit()
 
-    return render_template("order.html", goods=goods, total=total)
+    return render_template("order.html", title='Оформление заказа', goods=goods, total=total)
 
 
 @app.route('/map')
@@ -268,7 +270,7 @@ def map():
     sourse = os.getcwd() + '/map.png'
     dest = os.getcwd() + '/static/img/map.png'
     shutil.move(sourse, dest)
-    return render_template('map.html')
+    return render_template('map.html', title='Пункт выдачи')
 
 
 @app.route("/cookie_test")
