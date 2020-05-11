@@ -170,17 +170,19 @@ def basket():
         button = request.form['button']
         but = int(button.split()[1])
         sessions = db_session.create_session()
-        orders = sessions.query(Goods).filter(Goods.id == but).first()
+        orders = sessions.query(Orders).filter(Orders.id == but).first()
+        goods = sessions.query(Goods).filter(Goods.id == but).first()
         if button.split()[0] == '2':
-            conn = sqlite3.connect('db/shop.sqlite')
-            cur = conn.cursor()
-            sql = f"""
-                UPDATE orders 
-                SET value = value + 1
-                WHERE id = {orders.id}
-                """
-            cur.execute(sql)
-            conn.commit()
+            if orders.value + 1 <= goods.value:
+                conn = sqlite3.connect('db/shop.sqlite')
+                cur = conn.cursor()
+                sql = f"""
+                    UPDATE orders 
+                    SET value = value + 1
+                    WHERE id = {orders.id}
+                    """
+                cur.execute(sql)
+                conn.commit()
         if button.split()[0] == '1':
             conn = sqlite3.connect('db/shop.sqlite')
             cur = conn.cursor()
@@ -228,9 +230,16 @@ def order():
 
     sessions = db_session.create_session()
     order = sessions.query(Orders).all()
+    goods = sessions.query(Goods).all()
     total = 0
     for i in order:
         total += i.coast * i.value
+    for item in order:
+        conn = sqlite3.connect('db/shop.sqlite')
+        cur = conn.cursor()
+        sql = f"""UPDATE goods SET value = value - {item.value} WHERE id = {item.id}"""
+        cur.execute(sql)
+        conn.commit()
 
     if 'add' in session:
         session['add'] = []
@@ -247,9 +256,9 @@ def order():
 
 @app.route('/map')
 def map():
-    coords = '37.74164199829102,55.78153275636508'
     mash = 16
     mark = '37.74164199829102,55.78153275636508,pm2rdm'
+    mark2 = ''
     map_request = 'https://static-maps.yandex.ru/1.x/?l=map&pt=' + mark + ',' + '&z=' + str(mash)
     response = requests.get(map_request)
     map_file = 'map.png'
@@ -258,7 +267,6 @@ def map():
 
     sourse = os.getcwd() + '/map.png'
     dest = os.getcwd() + '/static/img/map.png'
-    print(sourse)
     shutil.move(sourse, dest)
     return render_template('map.html')
 
