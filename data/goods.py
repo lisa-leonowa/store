@@ -11,3 +11,4 @@ class Goods(SqlAlchemyBase):
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     image = sqlalchemy.Column(sqlalchemy.String)
     coast = sqlalchemy.Column(sqlalchemy.Integer)
+    value = sqlalchemy.Column(sqlalchemy.Integer)
