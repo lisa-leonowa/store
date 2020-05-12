@@ -288,5 +288,4 @@ def cookie_test():
     return res
 
 
-if __name__ == '__main__':
-    main()
+main()
