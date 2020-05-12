@@ -50,7 +50,6 @@ def load_user(user_id):
 
 def main():
     app.run(port=8080, host='127.0.0.1')
-    db_session.global_init("db/shop.sqlite")
 
 
 @app.errorhandler(404)
@@ -288,5 +287,6 @@ def cookie_test():
     return res
 
 
+db_session.global_init("db/shop.sqlite")
 if __name__ == '__main__':
     main()
