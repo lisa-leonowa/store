@@ -189,7 +189,7 @@ def basket():
             if button.split()[0] == '1':
                 conn = sqlite3.connect('db/shop.sqlite')
                 cur = conn.cursor()
-                if orders.value - 1 >= 0:
+                if orders.value - 1 > 0:
                     sql = f"""
                         UPDATE orders 
                         SET value = value - 1
